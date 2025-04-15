@@ -10,24 +10,35 @@ import {
   Button,
   Stack,
   SearchInput,
-  Icon,
-  Modal,
+  Message,
 } from "@cloudoperators/juno-ui-components"
 import { Link } from "react-router-dom"
-import HintLoading from "./Loading"
+import Loading from "./Loading"
 import ListItem from "./ListItem"
 
 const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
   const [items, setItems] = React.useState([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState(null)
+  const [searchText, setSearchText] = React.useState("")
+
+  const filteredData = React.useMemo(() => {
+    if (!items) return []
+    return items.filter((entry) => {
+      if (!searchText) return true
+      return (
+        // Check if the search text is present in the resource name, id, type or service type
+        entry.name?.includes(searchText) || entry.id?.includes(searchText) || entry.description?.includes(searchText)
+      )
+    })
+  }, [items, searchText])
 
   // fetch the items from the api
   React.useEffect(() => {
     getApiClient()
       .get(`users/${userId}/application_credentials`)
       .then((response) => {
-        console.log("response", response.data.application_credentials)
+        console.log("items response", response.data.application_credentials)
         setItems(response.data.application_credentials)
       })
       .catch((error) => {
@@ -55,7 +66,11 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
       <DataGridToolbar
         search={
           <Stack alignment="center">
-            <SearchInput placeholder="Search by name" />
+            <SearchInput
+              placeholder="Search by name, id or description"
+              onChange={(e) => setSearchText(e.target.value)}
+              onClear={() => setSearchText("")}
+            />
           </Stack>
         }
       >
@@ -65,12 +80,11 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
           </Link>
         </ButtonRow>
       </DataGridToolbar>
-
+      {error && <Message variant="error" text={error} />}
       {isLoading && !error && !items ? (
-        <HintLoading />
+        <Loading />
       ) : (
         <div>
-          {error && <div>Error: {error}</div>}
           <DataGrid columns={4} minContentColumns={[4]}>
             <DataGridRow>
               <DataGridHeadCell>Name</DataGridHeadCell>
@@ -78,8 +92,8 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
               <DataGridHeadCell>Expiration</DataGridHeadCell>
               <DataGridHeadCell></DataGridHeadCell>
             </DataGridRow>
-            {items && items.length > 0 ? (
-              items.map((item, index) => (
+            {filteredData.length > 0 ? (
+              filteredData.map((item, index) => (
                 <ListItem key={item.id} item={item} index={index} handleDelete={() => handleDelete(item.id)} />
               ))
             ) : (

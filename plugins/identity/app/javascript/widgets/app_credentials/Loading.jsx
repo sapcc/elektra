@@ -1,7 +1,7 @@
 import React from "react"
 import { Stack, Spinner } from "@cloudoperators/juno-ui-components"
 
-const HintLoading = ({ text, className }) => {
+const Loading = ({ text, className }) => {
   return (
     <Stack alignment="center" className={className}>
       <Spinner variant="primary" />
@@ -10,4 +10,4 @@ const HintLoading = ({ text, className }) => {
   )
 }
 
-export default HintLoading
+export default Loading

@@ -43,7 +43,6 @@ const NewAppCredentials = ({ userId, refreshList }) => {
         <Stack direction="vertical" gap="3">
           {error && <Message variant="error" text={error} />}
           {isLoading && <Message variant="info" text="Creating credential..." />}
-
           {responseData ? (
             <ResponseData appCredential={responseData} onConfirm={close} />
           ) : (
