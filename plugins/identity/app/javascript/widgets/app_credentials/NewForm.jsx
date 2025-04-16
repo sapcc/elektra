@@ -21,7 +21,6 @@ export function NewForm({ onSubmit, onCancel, setError }) {
           helptext="Enter a unique name for the credential."
           required
           onChange={(oEvent) => {
-            console.log("Form data before update:", formData)
             setFormData({ ...formData, name: oEvent.target.value })
           }}
         />
@@ -31,7 +30,6 @@ export function NewForm({ onSubmit, onCancel, setError }) {
           label="Description"
           name="description"
           helptext="Provide a brief description of the credential."
-          required
           onChange={(oEvent) => {
             setFormData({ ...formData, description: oEvent.target.value })
           }}
@@ -40,8 +38,9 @@ export function NewForm({ onSubmit, onCancel, setError }) {
       <FormRow>
         <DateTimePicker
           label="Expires At"
+          placeholder="Unlimited"
           name="expires_at"
-          helptext="Select expiration date and time, after which the credential will no longer be valid."
+          helptext="Select expiration date and time, after which the credential will no longer be valid. If not set, the credential will not expire."
           onChange={(selectedDate) => {
             const currentDate = new Date()
             let selectedDateTime = new Date(selectedDate)
@@ -52,7 +51,15 @@ export function NewForm({ onSubmit, onCancel, setError }) {
               return
             } else {
               selectedDateTime.setHours(23, 59, 59)
-              setFormData({ ...formData, expires_at: selectedDateTime.toISOString() })
+              // Update formData with the selected date and time
+              // I need to use the function call because I need to access the previous state
+              // to avoid overwriting other fields
+              setFormData((prevFormData) => {
+                const updatedFormData = { ...prevFormData, expires_at: selectedDateTime.toISOString() }
+                //console.log("FormData before update:", prevFormData)
+                //console.log("FormData after update:", updatedFormData)
+                return updatedFormData
+              })
             }
           }}
         />
