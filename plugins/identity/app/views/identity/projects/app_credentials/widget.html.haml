@@ -1,9 +1,5 @@
 = content_for :main_toolbar do
   Application Credentials
 
-.bs-callout.bs-callout-info.bs-callout-emphasize
-  %p
-    Application credentials allow users to grant their applications limited access to OpenStack cloud resources without exposing personal login credentials. Each credential consists of an ID and a secret, which are used for authentication. Users can manage these credentials to control access and permissions within their projects. Below is a list of your current application credentials
-
 -# user_id: used to get the application credentials for the user
 = javascript_include_tag :identity_app_credentials_widget, data: { user_id: current_user.id, domain_id: "#{@scoped_domain_fid}", project_id: "#{@scoped_project_fid}" }

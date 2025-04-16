@@ -15,6 +15,7 @@ import {
 import { Link } from "react-router-dom"
 import Loading from "./Loading"
 import ListItem from "./ListItem"
+import { IntroBox } from "@cloudoperators/juno-ui-components/build/IntroBox"
 
 const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
   const [items, setItems] = React.useState([])
@@ -38,7 +39,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
     getApiClient()
       .get(`users/${userId}/application_credentials`)
       .then((response) => {
-        console.log("items response", response.data.application_credentials)
+        //console.log("items response", response.data.application_credentials)
         setItems(response.data.application_credentials)
       })
       .catch((error) => {
@@ -63,6 +64,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
 
   return (
     <>
+      <IntroBox text="Application credentials allow users to grant their applications limited access to OpenStack cloud resources without exposing personal login credentials. Each credential consists of an ID and a secret, which are used for authentication. Users can manage these credentials to control access and permissions within their projects. You can create, view, and manage your Application Credentials here. Below is a list of your current application credentials." />
       <DataGridToolbar
         search={
           <Stack alignment="center">
@@ -76,7 +78,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
       >
         <ButtonRow>
           <Link to="/new">
-            <Button>New</Button>
+            <Button variant="primary">New</Button>
           </Link>
         </ButtonRow>
       </DataGridToolbar>
@@ -85,9 +87,10 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
         <Loading />
       ) : (
         <div>
-          <DataGrid columns={4} minContentColumns={[4]}>
+          <DataGrid columns={5} minContentColumns={[5]}>
             <DataGridRow>
               <DataGridHeadCell>Name</DataGridHeadCell>
+              <DataGridHeadCell>ID</DataGridHeadCell>
               <DataGridHeadCell>Description</DataGridHeadCell>
               <DataGridHeadCell>Expiration</DataGridHeadCell>
               <DataGridHeadCell></DataGridHeadCell>

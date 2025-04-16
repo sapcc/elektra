@@ -11,6 +11,7 @@ const ListItem = ({ item, index, handleDelete }) => {
     <>
       <DataGridRow key={index}>
         <DataGridCell>{!item.name ? "-" : <Link to={`/${item.id}/show`}>{item.name}</Link>}</DataGridCell>
+        <DataGridCell>{!item.id ? "-" : item.id}</DataGridCell>
         <DataGridCell>{!item.description ? "-" : item.description}</DataGridCell>
         <DataGridCell>
           {!item.expires_at
@@ -33,7 +34,7 @@ const ListItem = ({ item, index, handleDelete }) => {
         open={confirmDelete}
         cancelButtonLabel="Cancel"
         confirmButtonLabel="Delete"
-        confirmButtonIcon="warning"
+        confirmButtonIcon="danger"
         onCancel={close}
         onConfirm={handleDelete}
       >

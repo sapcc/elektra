@@ -1,5 +1,5 @@
 import React from "react"
-import { Panel, PanelBody, Stack, Message } from "@cloudoperators/juno-ui-components"
+import { Panel, PanelBody, Stack, Message, IntroBox } from "@cloudoperators/juno-ui-components"
 import { useHistory, useLocation } from "react-router-dom"
 import { getApiClient } from "./apiClient"
 import { NewForm } from "./NewForm"
@@ -17,8 +17,9 @@ const NewAppCredentials = ({ userId, refreshList }) => {
   }
 
   const handleSubmit = (formData) => {
-    if (!formData.name || !formData.description) {
-      setError("Name and Description are required.")
+    //console.log("formData", formData)
+    if (!formData.name) {
+      setError("Name are required.")
       return
     }
     setIsLoading(true)
@@ -29,7 +30,6 @@ const NewAppCredentials = ({ userId, refreshList }) => {
         refreshList()
       })
       .catch((error) => {
-        //console.log(JSON.stringify(error, null, 2))
         setError(error.data.error.error.message)
       })
       .finally(() => {
@@ -41,6 +41,7 @@ const NewAppCredentials = ({ userId, refreshList }) => {
     <Panel opened={true} onClose={close} heading="New Application Credentials">
       <PanelBody>
         <Stack direction="vertical" gap="3">
+          <IntroBox text="When you create a new Application Credential, it will automatically inherit your current user roles. You can view your assigned roles in your profile at any time. After the Application Credential has been created, you can review the roles granted to it in the details view." />
           {error && <Message variant="error" text={error} />}
           {isLoading && <Message variant="info" text="Creating credential..." />}
           {responseData ? (

@@ -38,7 +38,7 @@ const Show = ({ userId }) => {
     getApiClient()
       .get(`users/${userId}/application_credentials/${id}`)
       .then((response) => {
-        console.log("item response", response.data.application_credential)
+        //console.log("item response", response.data.application_credential)
         setItem(response.data.application_credential)
       })
       .catch((error) => {
