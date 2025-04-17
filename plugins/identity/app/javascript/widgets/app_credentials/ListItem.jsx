@@ -1,5 +1,5 @@
 import React from "react"
-import { DataGridRow, DataGridCell, ButtonRow, Icon, Modal, Badge } from "@cloudoperators/juno-ui-components"
+import { DataGridRow, DataGridCell, ButtonRow, Icon, Modal, Badge, Stack } from "@cloudoperators/juno-ui-components"
 import { Link } from "react-router-dom"
 
 const ListItem = ({ item, index, handleDelete }) => {
@@ -12,9 +12,9 @@ const ListItem = ({ item, index, handleDelete }) => {
   let expiredDate = null
   if (item.expires_at && item.expires_at !== "Unlimited") {
     const expriresAt = new Date(item.expires_at)
-    console.log("expiresAt", expriresAt)
+    //console.log("expiresAt", expriresAt)
     const currentDate = new Date()
-    console.log("currentDate", currentDate)
+    //console.log("currentDate", currentDate)
     if (currentDate > expriresAt) {
       expired = true
     }
@@ -24,7 +24,7 @@ const ListItem = ({ item, index, handleDelete }) => {
       year: "numeric",
     })
   } else {
-    console.log("expiresAt is not set or is Unlimited")
+    //console.log("expiresAt is not set or is Unlimited")
     expiredDate = "Unlimited"
   }
 
@@ -36,13 +36,23 @@ const ListItem = ({ item, index, handleDelete }) => {
         <DataGridCell>{!item.description ? "-" : item.description}</DataGridCell>
         <DataGridCell>
           {expired ? (
-            <Badge variant="error" icon="warning">
-              Expired/{expiredDate}
-            </Badge>
+            <Stack direction="horizontal" gap="1">
+              <Badge variant="warning" icon="warning">
+                Expired/
+              </Badge>
+              <Badge variant="warning" icon="info">
+                {expiredDate}
+              </Badge>
+            </Stack>
           ) : (
-            <Badge variant="success" icon="success">
-              Active/{expiredDate}
-            </Badge>
+            <Stack direction="horizontal" gap="1">
+              <Badge variant="success" icon="success">
+                Active
+              </Badge>
+              <Badge variant="success" icon="info">
+                {expiredDate}
+              </Badge>
+            </Stack>
           )}
         </DataGridCell>
         <DataGridCell>
