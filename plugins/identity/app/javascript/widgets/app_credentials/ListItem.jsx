@@ -1,5 +1,5 @@
 import React from "react"
-import { DataGridRow, DataGridCell, ButtonRow, Icon, Modal } from "@cloudoperators/juno-ui-components"
+import { DataGridRow, DataGridCell, ButtonRow, Icon, Modal, Badge } from "@cloudoperators/juno-ui-components"
 import { Link } from "react-router-dom"
 
 const ListItem = ({ item, index, handleDelete }) => {
@@ -7,6 +7,27 @@ const ListItem = ({ item, index, handleDelete }) => {
   const close = () => {
     setConfirmDelete(false)
   }
+
+  let expired = false
+  let expiredDate = null
+  if (item.expires_at && item.expires_at !== "Unlimited") {
+    const expriresAt = new Date(item.expires_at)
+    console.log("expiresAt", expriresAt)
+    const currentDate = new Date()
+    console.log("currentDate", currentDate)
+    if (currentDate > expriresAt) {
+      expired = true
+    }
+    expiredDate = expriresAt.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
+  } else {
+    console.log("expiresAt is not set or is Unlimited")
+    expiredDate = "Unlimited"
+  }
+
   return (
     <>
       <DataGridRow key={index}>
@@ -14,13 +35,15 @@ const ListItem = ({ item, index, handleDelete }) => {
         <DataGridCell>{!item.id ? "-" : item.id}</DataGridCell>
         <DataGridCell>{!item.description ? "-" : item.description}</DataGridCell>
         <DataGridCell>
-          {!item.expires_at
-            ? "Unlimited"
-            : new Date(item.expires_at).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
+          {expired ? (
+            <Badge variant="error" icon="warning">
+              Expired/{expiredDate}
+            </Badge>
+          ) : (
+            <Badge variant="success" icon="success">
+              Active/{expiredDate}
+            </Badge>
+          )}
         </DataGridCell>
         <DataGridCell>
           <ButtonRow>
