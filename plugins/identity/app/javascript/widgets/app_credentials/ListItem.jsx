@@ -8,6 +8,7 @@ const ListItem = ({ item, index, handleDelete }) => {
     setConfirmDelete(false)
   }
 
+  // TODO -> move into own Expired Component to use it also in the Show component
   let expired = false
   let expiredDate = null
   if (item.expires_at && item.expires_at !== "Unlimited") {
@@ -38,9 +39,9 @@ const ListItem = ({ item, index, handleDelete }) => {
           {expired ? (
             <Stack direction="horizontal" gap="1">
               <Badge variant="warning" icon="warning">
-                Expired/
+                Expired
               </Badge>
-              <Badge variant="warning" icon="info">
+              <Badge variant="danger" icon="info">
                 {expiredDate}
               </Badge>
             </Stack>
@@ -49,9 +50,15 @@ const ListItem = ({ item, index, handleDelete }) => {
               <Badge variant="success" icon="success">
                 Active
               </Badge>
-              <Badge variant="success" icon="info">
-                {expiredDate}
-              </Badge>
+              {expiredDate === "Unlimited" ? (
+                <Badge variant="warning" icon="info">
+                  Unlimited
+                </Badge>
+              ) : (
+                <Badge variant="success" icon="success">
+                  {expiredDate}
+                </Badge>
+              )}
             </Stack>
           )}
         </DataGridCell>
