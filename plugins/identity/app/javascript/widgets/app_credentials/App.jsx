@@ -3,7 +3,7 @@ import { AppShellProvider, AppShell } from "@cloudoperators/juno-ui-components"
 import AppRouter from "./Approuter"
 
 export default function App({ userId }) {
-  console.log("userId", userId)
+  //console.log("userId", userId)
   return (
     <>
       <AppShellProvider theme="theme-light">
