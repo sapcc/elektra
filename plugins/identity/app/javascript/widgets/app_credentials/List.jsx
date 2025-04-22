@@ -14,7 +14,7 @@ import {
 } from "@cloudoperators/juno-ui-components"
 import { Link } from "react-router-dom"
 import Loading from "./Loading"
-import ListItem from "./ListItem"
+import Item from "./Item"
 import { IntroBox } from "@cloudoperators/juno-ui-components/build/IntroBox"
 
 const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
@@ -97,7 +97,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
             </DataGridRow>
             {filteredData.length > 0 ? (
               filteredData.map((item, index) => (
-                <ListItem key={item.id} item={item} index={index} handleDelete={() => handleDelete(item.id)} />
+                <Item key={item.id} item={item} index={index} handleDelete={() => handleDelete(item.id)} />
               ))
             ) : (
               <DataGridRow>

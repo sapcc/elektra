@@ -13,15 +13,7 @@ import { useParams } from "react-router-dom"
 import { getApiClient } from "./apiClient"
 import { useHistory, useLocation } from "react-router-dom"
 import Loading from "./Loading"
-
-const DetailsRow = ({ label, value }) => {
-  return (
-    <DataGridRow>
-      <DataGridHeadCell>{label}</DataGridHeadCell>
-      <DataGridCell className="tw-break-all">{value}</DataGridCell>
-    </DataGridRow>
-  )
-}
+import ExpireDate from "./ExpireDate"
 
 const Show = ({ userId }) => {
   const { id } = useParams()
@@ -64,25 +56,30 @@ const Show = ({ userId }) => {
             ) : (
               <div>
                 <DataGrid columns={2}>
-                  <DetailsRow label="Name" value={!item.name ? "-" : item.name} />
-                  <DetailsRow label="ID" value={item?.id} />
-                  <DetailsRow label="Description" value={!item.description ? "-" : item.description} />
-                  <DetailsRow
-                    label="Roles"
-                    value={!item.roles ? "-" : item.roles.map((role) => role.name).join(", ")}
-                  />
-                  <DetailsRow
-                    label="Expires At"
-                    value={
-                      !item.expires_at
-                        ? "Unlimited"
-                        : new Date(item.expires_at).toLocaleDateString("en-US", {
-                            month: "long",
-                            day: "numeric",
-                            year: "numeric",
-                          })
-                    }
-                  />
+                  <DataGridRow>
+                    <DataGridHeadCell>Name</DataGridHeadCell>
+                    <DataGridCell className="tw-break-all">{!item.name ? "-" : item.name}</DataGridCell>
+                  </DataGridRow>
+                  <DataGridRow>
+                    <DataGridHeadCell>ID</DataGridHeadCell>
+                    <DataGridCell className="tw-break-all">{item?.id}</DataGridCell>
+                  </DataGridRow>
+                  <DataGridRow>
+                    <DataGridHeadCell>Description</DataGridHeadCell>
+                    <DataGridCell className="tw-break-all">{!item.description ? "-" : item.description} </DataGridCell>
+                  </DataGridRow>
+                  <DataGridRow>
+                    <DataGridHeadCell>Roles</DataGridHeadCell>
+                    <DataGridCell className="tw-break-all">
+                      {!item.roles ? "-" : item.roles.map((role) => role.name).join(", ")}
+                    </DataGridCell>
+                  </DataGridRow>
+                  <DataGridRow>
+                    <DataGridHeadCell>Expires at</DataGridHeadCell>
+                    <DataGridCell className="tw-break-all">
+                      <ExpireDate item={item}></ExpireDate>
+                    </DataGridCell>
+                  </DataGridRow>
                 </DataGrid>
               </div>
             )}
