@@ -2,4 +2,4 @@
   Application Credentials
 
 -# user_id: used to get the application credentials for the user
-= javascript_include_tag :identity_app_credentials_widget, data: { user_id: current_user.id, domain_id: "#{@scoped_domain_fid}", project_id: "#{@scoped_project_fid}" }
+= javascript_include_tag :identity_app_credentials_widget, data: { user_id: current_user.id, domain_name: "#{@scoped_domain_fid}", project_name: "#{@scoped_project_fid}", project_id: "#{@scoped_project_id}" }

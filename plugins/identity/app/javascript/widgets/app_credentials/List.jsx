@@ -17,8 +17,9 @@ import Loading from "./Loading"
 import Item from "./Item"
 import { IntroBox } from "@cloudoperators/juno-ui-components/build/IntroBox"
 
-const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
+const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
   const [items, setItems] = React.useState([])
+  const [appCredentialsFoundForProject, setAppCredentialsFoundForProject] = React.useState(null)
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState(null)
   const [searchText, setSearchText] = React.useState("")
@@ -41,6 +42,10 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
       .then((response) => {
         //console.log("items response", response.data.application_credentials)
         setItems(response.data.application_credentials)
+        // check if the project id is in the response
+        // otherwise there is not application credentials for this project
+        const foundProject = response.data.application_credentials.find((item) => item.project_id === projectId)
+        setAppCredentialsFoundForProject(foundProject)
       })
       .catch((error) => {
         setError(error.message)
@@ -83,28 +88,41 @@ const AppCredentialsList = ({ userId, refreshRequestedAt }) => {
         </ButtonRow>
       </DataGridToolbar>
       {error && <Message variant="error" text={error} />}
-      {isLoading && !error && !items ? (
+      {isLoading || (!items && !error) ? (
         <Loading />
       ) : (
         <div>
-          <DataGrid columns={5} minContentColumns={[5]}>
+          {!appCredentialsFoundForProject ? (
             <DataGridRow>
-              <DataGridHeadCell>Name</DataGridHeadCell>
-              <DataGridHeadCell>ID</DataGridHeadCell>
-              <DataGridHeadCell>Description</DataGridHeadCell>
-              <DataGridHeadCell>Expiration</DataGridHeadCell>
-              <DataGridHeadCell></DataGridHeadCell>
+              <DataGridCell colSpan={4}>
+                No Application Credentials found for this project, create a new one 🚀
+              </DataGridCell>
             </DataGridRow>
-            {filteredData.length > 0 ? (
-              filteredData.map((item, index) => (
-                <Item key={item.id} item={item} index={index} handleDelete={() => handleDelete(item.id)} />
-              ))
-            ) : (
+          ) : (
+            <DataGrid columns={5} minContentColumns={[5]}>
               <DataGridRow>
-                <DataGridCell colSpan={4}>No Application Credentials found, create a new one 🚀</DataGridCell>
+                <DataGridHeadCell>Name</DataGridHeadCell>
+                <DataGridHeadCell>ID</DataGridHeadCell>
+                <DataGridHeadCell>Description</DataGridHeadCell>
+                <DataGridHeadCell>Expiration</DataGridHeadCell>
+                <DataGridHeadCell></DataGridHeadCell>
               </DataGridRow>
-            )}
-          </DataGrid>
+              {filteredData.length > 0 ? (
+                filteredData.map(
+                  (item, index) =>
+                    item.project_id === projectId && (
+                      <Item key={item.id} item={item} index={index} handleDelete={() => handleDelete(item.id)} />
+                    )
+                )
+              ) : (
+                <DataGridRow>
+                  <DataGridCell colSpan={4}>
+                    No Application Credentials found for search criteria, create a new one 🚀
+                  </DataGridCell>
+                </DataGridRow>
+              )}
+            </DataGrid>
+          )}
         </div>
       )}
     </>
