@@ -29,5 +29,6 @@ module Identity
       
       render json: { auth_projects: updated_projects }
     end
+
   end
 end
