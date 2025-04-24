@@ -1,15 +1,21 @@
 import React from "react"
-import { Badge, Stack } from "@cloudoperators/juno-ui-components"
+import { Badge, Stack, Icon } from "@cloudoperators/juno-ui-components"
 
 const ExpireDate = ({ item }) => {
   let expired = false
+  let willExpire = false
   let expiredDate = null
   if (item.expires_at && item.expires_at !== "Unlimited") {
     const expriresAt = new Date(item.expires_at)
     //console.log("expiresAt", expriresAt)
     const currentDate = new Date()
     //console.log("currentDate", currentDate)
-    if (currentDate > expriresAt) {
+
+    let diffInSeconds = (expriresAt.getTime() - currentDate.getTime()) / 1000
+    if (diffInSeconds > 0 && diffInSeconds < 60 * 60 * 24 * 7) {
+      //console.log("will expire in less than 7 days")
+      willExpire = true
+    } else if (diffInSeconds < 0) {
       expired = true
     }
     expiredDate = expriresAt.toLocaleDateString("en-US", {
@@ -24,31 +30,20 @@ const ExpireDate = ({ item }) => {
 
   return (
     <div>
-      {expired ? (
-        <Stack direction="horizontal" gap="1">
-          <Badge variant="warning" icon="warning">
-            Expired
-          </Badge>
-          <Badge variant="danger" icon="info">
-            {expiredDate}
-          </Badge>
-        </Stack>
-      ) : (
-        <Stack direction="horizontal" gap="1">
-          <Badge variant="success" icon="success">
-            Active
-          </Badge>
-          {expiredDate === "Unlimited" ? (
-            <Badge variant="warning" icon="info">
-              Unlimited
-            </Badge>
-          ) : (
-            <Badge variant="success" icon="success">
-              {expiredDate}
-            </Badge>
-          )}
-        </Stack>
-      )}
+      <Stack direction="horizontal" gap="1">
+        <div>{expiredDate}</div>
+        {expired ? (
+          <Badge className="jn-text-theme-light" variant="warning" text="expired" />
+        ) : (
+          <span>
+            {willExpire ? (
+              <Icon color="jn-text-theme-warning" icon="warning" title="will expire in less than 7 days" />
+            ) : (
+              ""
+            )}
+          </span>
+        )}
+      </Stack>
     </div>
   )
 }
