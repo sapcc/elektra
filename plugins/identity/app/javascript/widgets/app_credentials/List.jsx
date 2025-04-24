@@ -69,7 +69,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
 
   return (
     <>
-      <IntroBox text="Application credentials allow users to grant their applications limited access to OpenStack cloud resources without exposing personal login credentials. Each credential consists of an ID and a secret, which are used for authentication. Users can manage these credentials to control access and permissions within their projects. You can create, view, and manage your Application Credentials here. Below is a list of your current application credentials." />
+      <IntroBox text="Application credentials allow users to grant their applications limited access to OpenStack cloud resources without exposing personal login credentials. Each credential consists of an ID and a secret, which are used for authentication. Users can manage these credentials to control access and permissions within their projects. You can create, view, and manage your Application Credentials here. Below is a list of your current application credentials for this project." />
       <DataGridToolbar
         search={
           <Stack alignment="center">
@@ -94,9 +94,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
         <div>
           {!appCredentialsFoundForProject ? (
             <DataGridRow>
-              <DataGridCell colSpan={4}>
-                No Application Credentials found for this project, create a new one 🚀
-              </DataGridCell>
+              <DataGridCell colSpan={4}>No application credentials found. Create a new one 🚀</DataGridCell>
             </DataGridRow>
           ) : (
             <DataGrid columns={5} minContentColumns={[5]}>
@@ -116,9 +114,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
                 )
               ) : (
                 <DataGridRow>
-                  <DataGridCell colSpan={4}>
-                    No Application Credentials found for search criteria, create a new one 🚀
-                  </DataGridCell>
+                  <DataGridCell colSpan={4}>No application credentials found.</DataGridCell>
                 </DataGridRow>
               )}
             </DataGrid>
