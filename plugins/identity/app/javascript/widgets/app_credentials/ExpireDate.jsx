@@ -33,11 +33,11 @@ const ExpireDate = ({ item }) => {
       <Stack direction="horizontal" gap="1">
         <div>{expiredDate}</div>
         {expired ? (
-          <Badge className="jn-text-theme-light" variant="warning" text="expired" />
+          <Badge className="tw-text-theme-light" variant="warning" text="expired" />
         ) : (
           <span>
             {willExpire ? (
-              <Icon color="jn-text-theme-warning" icon="warning" title="will expire in less than 7 days" />
+              <Icon color="tw-text-theme-warning" icon="warning" title="will expire in less than 7 days" />
             ) : (
               ""
             )}
