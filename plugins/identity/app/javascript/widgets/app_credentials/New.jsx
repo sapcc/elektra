@@ -13,7 +13,7 @@ const NewAppCredentials = ({ userId, refreshList }) => {
   const [responseData, setResponseData] = React.useState(null)
 
   const close = () => {
-    history.replace(location.pathname.replace("/new", ""))
+    history.replace(location.pathname.replace("/create", ""))
   }
 
   const handleSubmit = (formData) => {
