@@ -24,6 +24,7 @@ const Show = ({ userId }) => {
   const [item, setItem] = React.useState({})
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState(null)
+  const [expired, setExpired] = React.useState(false)
 
   // fetch the items from the api
   React.useEffect(() => {
@@ -77,7 +78,7 @@ const Show = ({ userId }) => {
                   <DataGridRow>
                     <DataGridHeadCell>Expires at</DataGridHeadCell>
                     <DataGridCell className="tw-break-all">
-                      <ExpireDate item={item}></ExpireDate>
+                      <ExpireDate item={item} setExpired={setExpired} expired={expired}></ExpireDate>
                     </DataGridCell>
                   </DataGridRow>
                 </DataGrid>
