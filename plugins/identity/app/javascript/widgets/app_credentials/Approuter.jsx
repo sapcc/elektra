@@ -25,7 +25,7 @@ const AppRouter = ({ userId, projectId }) => {
           path="/"
           render={() => <List userId={userId} projectId={projectId} refreshRequestedAt={refreshRequestedAt} />}
         />
-        <Route exact path="/new" render={() => <New userId={userId} refreshList={refreshList} />} />
+        <Route exact path="/create" render={() => <New userId={userId} refreshList={refreshList} />} />
         <Route exact path="/:id/show" render={() => <Show userId={userId} />} />
       </BrowserRouter>
     </>

@@ -38,7 +38,7 @@ const NewAppCredentials = ({ userId, refreshList }) => {
   }
 
   return (
-    <Panel opened={true} onClose={close} heading="New Application Credentials">
+    <Panel opened={true} onClose={close} heading="Create New Application Credentials">
       <PanelBody>
         <Stack direction="vertical" gap="3">
           <IntroBox text="When you create a new Application Credential, it will automatically inherit your current user roles. You can view your assigned roles in your profile at any time. After the Application Credential has been created, you can review the roles granted to it in the details view." />

@@ -82,8 +82,8 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
         }
       >
         <ButtonRow>
-          <Link to="/new">
-            <Button variant="primary">New</Button>
+          <Link to="/create">
+            <Button variant="primary">Create</Button>
           </Link>
         </ButtonRow>
       </DataGridToolbar>
