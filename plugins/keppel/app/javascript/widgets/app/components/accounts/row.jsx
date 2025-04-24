@@ -37,11 +37,9 @@ export default class AccountRow extends React.Component {
       name: accountName,
       auth_tenant_id: projectID,
       state,
-      metadata,
       replication,
       platform_filter: platformFilter,
     } = this.props.account
-    const isEditable = (metadata || {}).readonly_in_elektra != "true"
     const containerName = `keppel-${accountName}`
     const accountIsDeleting = apiStateIsDeleting(state)
     const swiftContainerURL = `/_/${projectID}/object-storage/swift/containers/${containerName}/objects`
@@ -131,7 +129,7 @@ export default class AccountRow extends React.Component {
               {this.props.isAdmin && (
                 <>
                   <li className="divider"></li>
-                  {isEditable && replication && replication.strategy == "from_external_on_first_use" && (
+                  {replication && replication.strategy == "from_external_on_first_use" && (
                     <li>
                       <Link to={`/accounts/${accountName}/upstream_config`}>Edit replication credentials</Link>
                     </li>

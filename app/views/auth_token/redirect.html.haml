@@ -7,7 +7,7 @@
     .spinner    
 
 :javascript
-  const after_login = "/#{@domain_name}/home";
+  let after_login = "/#{@domain_name}/home";
   // try to get the after_login from the localStorage
   if (localStorage.getItem('after_login')) {
     after_login = localStorage.getItem('after_login');

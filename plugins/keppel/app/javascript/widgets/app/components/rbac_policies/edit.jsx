@@ -61,6 +61,14 @@ export default class RBACPoliciesEditModal extends React.Component {
     }
     this.setState({ ...this.state, policies })
   }
+  setForbiddenPermissions = (idx, input) => {
+    const policies = [...this.state.policies]
+    policies[idx] = { ...policies[idx], forbidden_permissions: input === "" ? null : input.split(",") }
+    if (input == "anonymous_pull" || input == "anonymous_first_pull") {
+      policies[idx].match_username = ""
+    }
+    this.setState({ ...this.state, policies })
+  }
   removePolicy = (idx, input) => {
     const policies = this.state.policies.filter((p, index) => idx != index)
     this.setState({ ...this.state, policies })
@@ -109,8 +117,6 @@ export default class RBACPoliciesEditModal extends React.Component {
     if (!account || apiStateIsDeleting(account?.state)) {
       return
     }
-    const isEditable =
-      isAdmin && (account.metadata || {}).readonly_in_elektra != "true"
     const isExternalReplica =
       (account.replication || {}).strategy === "from_external_on_first_use"
 
@@ -122,15 +128,17 @@ export default class RBACPoliciesEditModal extends React.Component {
       setUserRegex,
       setSourceCIDR,
       setPermissions,
+      setForbiddenPermissions,
       removePolicy,
     } = this
     const commonPropsForRow = {
-      isEditable,
+      isEditable: isAdmin,
       isExternalReplica,
       setRepoRegex,
       setUserRegex,
       setSourceCIDR,
       setPermissions,
+      setForbiddenPermissions,
       removePolicy,
     }
 
@@ -174,12 +182,6 @@ export default class RBACPoliciesEditModal extends React.Component {
               </>
             )}
           </p>
-          {isAdmin && !isEditable && (
-            <p className="bs-callout bs-callout-warning bs-callout-emphasize">
-              The configuration for this account is read-only in this UI,
-              probably because it was deployed by an automated process.
-            </p>
-          )}
           <table className="table">
             <thead>
               <tr>
@@ -188,7 +190,7 @@ export default class RBACPoliciesEditModal extends React.Component {
                 <th className="col-md-2">Requests from (CIDR)</th>
                 <th className="col-md-3">Permissions</th>
                 <th className="col-md-1">
-                  {isEditable && (
+                  {isAdmin && (
                     <button
                       className="btn btn-sm btn-default"
                       onClick={this.addPolicy}
@@ -231,12 +233,12 @@ export default class RBACPoliciesEditModal extends React.Component {
         </Modal.Body>
 
         <Modal.Footer>
-          {isEditable ? (
+          {isAdmin ? (
             <>
               <Button
                 onClick={this.handleSubmit}
                 bsStyle="primary"
-                disabled={isSubmitting || !isEditable}
+                disabled={isSubmitting}
               >
                 {isSubmitting ? "Saving..." : "Save"}
               </Button>
