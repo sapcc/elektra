@@ -75,7 +75,7 @@ module DnsService
         if not params[:search].blank?
           @search = params[:search]
           @searchfor = "#{params[:searchfor]}"
-          # surrunding the user submitted search term with wildcards is stupid but the easiest way to make the search intuitive and match partial names
+          # surrounding the user submitted search term with wildcards is stupid but the easiest way to make the search intuitive and match partial names
           filter = { @searchfor.downcase() => "*" + @search + "*" }
         else
           params.delete(:search)
