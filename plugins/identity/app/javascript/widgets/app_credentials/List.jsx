@@ -17,7 +17,7 @@ import Loading from "./Loading"
 import Item from "./Item"
 import { IntroBox } from "@cloudoperators/juno-ui-components/build/IntroBox"
 
-const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
+const AppCredentialsList = ({ userId, refreshRequestedAt, projectId, overlay }) => {
   const [items, setItems] = React.useState([])
   const [appCredentialsFoundForProject, setAppCredentialsFoundForProject] = React.useState(null)
   const [isLoading, setIsLoading] = React.useState(true)
@@ -68,7 +68,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
   }
 
   return (
-    <>
+    <div>
       <IntroBox text="Application credentials allow users to grant their applications limited access to OpenStack cloud resources without exposing personal login credentials. Each credential consists of an ID and a secret, which are used for authentication. Users can manage these credentials to control access and permissions within their projects. You can create, view, and manage your Application Credentials here. Below is a list of your current application credentials for this project." />
       <DataGridToolbar
         search={
@@ -121,7 +121,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
           )}
         </div>
       )}
-    </>
+    </div>
   )
 }
 
