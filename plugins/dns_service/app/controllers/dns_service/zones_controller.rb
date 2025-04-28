@@ -18,7 +18,8 @@ module DnsService
         if not params[:search].blank?
           @search = params[:search]
           @searchfor = "#{params[:searchfor]}"
-          filter = { @searchfor.downcase() => @search }
+          # surrounding the user submitted search term with wildcards is stupid but the easiest way to make the search intuitive and match partial names
+          filter = { @searchfor.downcase() => "*#@search*" }
         else
           params.delete(:search)
           params.delete(:searchfor)
@@ -74,7 +75,8 @@ module DnsService
         if not params[:search].blank?
           @search = params[:search]
           @searchfor = "#{params[:searchfor]}"
-          filter = { @searchfor.downcase() => @search }
+          # surrounding the user submitted search term with wildcards is stupid but the easiest way to make the search intuitive and match partial names
+          filter = { @searchfor.downcase() => "*#@search*" }
         else
           params.delete(:search)
           params.delete(:searchfor)
@@ -149,8 +151,8 @@ module DnsService
 
       # create_zone is located in the concerns/create_zone_helpers
       @zone = create_zone(params[:zone][:name],params[:zone], @scoped_domain_id, @scoped_project_id)
-  
-      # do not use @zone.valid? 
+
+      # do not use @zone.valid?
       # it is broken, calling this method will reset errors and return true
       if @zone.errors.empty? and @zone.id.present?
         flash.now[:notice] = "Zone successfully created."
