@@ -74,9 +74,10 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId, overlay }) 
         search={
           <Stack alignment="center">
             <SearchInput
-              placeholder="Search by name, id or description"
+              placeholder="Search name, id, description"
               onChange={(e) => setSearchText(e.target.value)}
               onClear={() => setSearchText("")}
+              size
             />
           </Stack>
         }
