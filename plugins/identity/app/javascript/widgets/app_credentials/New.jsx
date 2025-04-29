@@ -4,8 +4,9 @@ import { useHistory, useLocation } from "react-router-dom"
 import { getApiClient } from "./apiClient"
 import { NewForm } from "./NewForm"
 import { ResponseData } from "./ResponseData"
+import { set } from "date-fns"
 
-const NewAppCredentials = ({ userId, refreshList }) => {
+const NewAppCredentials = ({ userId, refreshList, setOverlay }) => {
   const location = useLocation()
   const history = useHistory()
   const [error, setError] = React.useState(null)
@@ -14,6 +15,7 @@ const NewAppCredentials = ({ userId, refreshList }) => {
 
   const close = () => {
     history.replace(location.pathname.replace("/create", ""))
+    setOverlay(false)
   }
 
   const handleSubmit = (formData) => {
@@ -22,12 +24,14 @@ const NewAppCredentials = ({ userId, refreshList }) => {
       setError("Name are required.")
       return
     }
+    setError(null)
     setIsLoading(true)
     getApiClient()
       .post(`users/${userId}/application_credentials`, { application_credential: formData })
       .then(({ data }) => {
         setResponseData(data.application_credential)
         refreshList()
+        setOverlay(true)
       })
       .catch((error) => {
         setError(error.data.error.error.message)

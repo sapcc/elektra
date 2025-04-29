@@ -17,7 +17,7 @@ import Loading from "./Loading"
 import Item from "./Item"
 import { IntroBox } from "@cloudoperators/juno-ui-components/build/IntroBox"
 
-const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
+const AppCredentialsList = ({ userId, refreshRequestedAt, projectId, overlay }) => {
   const [items, setItems] = React.useState([])
   const [appCredentialsFoundForProject, setAppCredentialsFoundForProject] = React.useState(null)
   const [isLoading, setIsLoading] = React.useState(true)
@@ -68,15 +68,16 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
   }
 
   return (
-    <>
-      <IntroBox text="Application credentials allow users to grant their applications limited access to OpenStack cloud resources without exposing personal login credentials. Each credential consists of an ID and a secret, which are used for authentication. Users can manage these credentials to control access and permissions within their projects. You can create, view, and manage your Application Credentials here. Below is a list of your current application credentials." />
+    <div>
+      <IntroBox text="Application credentials allow users to grant their applications limited access to OpenStack cloud resources without exposing personal login credentials. Each credential consists of an ID and a secret, which are used for authentication. Users can manage these credentials to control access and permissions within their projects. You can create, view, and manage your Application Credentials here. Below is a list of your current application credentials for this project." />
       <DataGridToolbar
         search={
           <Stack alignment="center">
             <SearchInput
-              placeholder="Search by name, id or description"
+              placeholder="Search name, id, description"
               onChange={(e) => setSearchText(e.target.value)}
               onClear={() => setSearchText("")}
+              size
             />
           </Stack>
         }
@@ -94,9 +95,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
         <div>
           {!appCredentialsFoundForProject ? (
             <DataGridRow>
-              <DataGridCell colSpan={4}>
-                No Application Credentials found for this project, create a new one 🚀
-              </DataGridCell>
+              <DataGridCell colSpan={4}>No application credentials found. Create a new one 🚀</DataGridCell>
             </DataGridRow>
           ) : (
             <DataGrid columns={5} minContentColumns={[5]}>
@@ -116,16 +115,14 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId }) => {
                 )
               ) : (
                 <DataGridRow>
-                  <DataGridCell colSpan={4}>
-                    No Application Credentials found for search criteria, create a new one 🚀
-                  </DataGridCell>
+                  <DataGridCell colSpan={4}>No application credentials found.</DataGridCell>
                 </DataGridRow>
               )}
             </DataGrid>
           )}
         </div>
       )}
-    </>
+    </div>
   )
 }
 

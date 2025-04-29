@@ -5,6 +5,7 @@ import ExpireDate from "./ExpireDate"
 
 const Item = ({ item, index, handleDelete }) => {
   const [confirmDelete, setConfirmDelete] = React.useState(false)
+  const [expired, setExpired] = React.useState(false)
   const close = () => {
     setConfirmDelete(false)
   }
@@ -13,10 +14,12 @@ const Item = ({ item, index, handleDelete }) => {
     <>
       <DataGridRow key={index}>
         <DataGridCell>{!item.name ? "-" : <Link to={`/${item.id}/show`}>{item.name}</Link>}</DataGridCell>
-        <DataGridCell>{!item.id ? "-" : item.id}</DataGridCell>
-        <DataGridCell>{!item.description ? "-" : item.description}</DataGridCell>
+        <DataGridCell className={expired ? "tw-text-theme-light" : ""}>{!item.id ? "-" : item.id}</DataGridCell>
+        <DataGridCell className={expired ? "tw-text-theme-light" : ""}>
+          {!item.description ? "-" : item.description}
+        </DataGridCell>
         <DataGridCell>
-          <ExpireDate item={item} />
+          <ExpireDate item={item} setExpired={setExpired} expired={expired} />
         </DataGridCell>
         <DataGridCell>
           <ButtonRow>
