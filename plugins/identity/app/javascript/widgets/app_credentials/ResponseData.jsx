@@ -12,7 +12,7 @@ export function ResponseData({ appCredential, onConfirm }) {
         />
         <CodeBlock heading="Secret Key" content={appCredential.secret} />
         <ButtonRow>
-          <Button label="Confirm and Close" onClick={onConfirm} />
+          <Button variant="primary" icon="success" label="Confirm and Close" onClick={onConfirm} />
         </ButtonRow>
       </Stack>
     </div>
