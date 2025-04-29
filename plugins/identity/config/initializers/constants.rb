@@ -14,6 +14,9 @@ ALLOWED_ROLES = %w[
   keymanager_viewer
   kubernetes_admin
   kubernetes_member
+  loadbalancer_admin
+  loadbalancer_viewer
+  loadbalancer_poolmemberadmin
   member
   masterdata_admin
   masterdata_viewer
