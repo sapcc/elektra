@@ -61,7 +61,6 @@ export default class SecurityServiceList extends React.Component {
               <tr>
                 <th>Name</th>
                 <th>Type</th>
-                <th>Status</th>
                 <th></th>
               </tr>
             </thead>
