@@ -30,6 +30,9 @@ en:
     image_viewer: Glance Read-Only
     keymanager_admin: Barbican Administrator
     keymanager_viewer: Barbican Read-Only
+    loadbalancer_admin: Load Balancer Administrator
+    loadbalancer_viewer: Load Balancer Read-Only
+    loadbalancer_poolmemberadmin: Load Balancer Pool Member Administrator
     masterdata_admin: Master Data Administrator
     masterdata_viewer: Master Data Read-Only
     member: Member
