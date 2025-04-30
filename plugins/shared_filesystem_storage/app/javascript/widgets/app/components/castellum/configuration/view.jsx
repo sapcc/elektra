@@ -54,7 +54,7 @@ export default class CastellumConfigurationView extends React.Component {
               Shares will be extended when usage exceeds{" "}
               <strong>{percent(config.high_threshold.usage_percent)}</strong>{" "}
               {config.size_constraints &&
-                config.size_constraints.minimum_free && (
+                config.size_constraints.minimum_free && !config.size_constraints.minimum_free_is_critical && (
                   <>
                     (or when free space is below{" "}
                     <strong>{config.size_constraints.minimum_free} GiB</strong>)
@@ -64,12 +64,24 @@ export default class CastellumConfigurationView extends React.Component {
               <strong>{duration(config.high_threshold.delay_seconds)}</strong>.
             </li>
           )}
-          {config.critical_threshold && (
+          {(config.critical_threshold || config.size_constraints.minimum_free_is_critical) && (
             <li>
-              Shares will be extended immediately when usage exceeds{" "}
-              <strong>
-                {percent(config.critical_threshold.usage_percent)}
-              </strong>
+              Shares will be extended immediately{" "}
+              {config.critical_threshold &&
+                <>
+                  when usage exceeds{" "}
+                    <strong>
+                      {percent(config.critical_threshold.usage_percent)}{" "}
+                    </strong>
+                </>
+              }
+              {config.size_constraints.minimum_free_is_critical && 
+                <>
+                  {config.critical_threshold && <>or {" "}</>}
+                  when free space is below{" "}
+                    <strong>{config.size_constraints.minimum_free} GiB</strong>
+                </>
+              }
               .
             </li>
           )}
@@ -113,11 +125,6 @@ export default class CastellumConfigurationView extends React.Component {
                 ...never below{" "}
                 <strong>{config.size_constraints.minimum_free} GiB</strong> of
                 free space.
-              </li>
-            )}
-            {config.size_constraints.minimum_free_is_critical && (
-              <li>
-                ...resize without delay.
               </li>
             )}
           </ul>
