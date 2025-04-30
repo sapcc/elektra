@@ -6,9 +6,7 @@ import React from "react"
 const Item = ({ securityService, handleDelete }) => (
   <tr className={securityService.isDeleting ? "updating" : ""}>
     <td>
-      <Link to={`/security-services/${securityService.id}/show`}>
-        {securityService.name || securityService.id}
-      </Link>
+      <Link to={`/security-services/${securityService.id}/show`}>{securityService.name || securityService.id}</Link>
       {securityService.name && (
         <>
           <br />
@@ -17,12 +15,9 @@ const Item = ({ securityService, handleDelete }) => (
       )}
     </td>
     <td>{securityService.type}</td>
-    <td>{securityService.status}</td>
     <td className="snug">
       {(policy.isAllowed("shared_filesystem_storage:security_service_delete") ||
-        policy.isAllowed(
-          "shared_filesystem_storage:security_service_update"
-        )) && (
+        policy.isAllowed("shared_filesystem_storage:security_service_update")) && (
         <div className="btn-group">
           <button
             className="btn btn-default btn-sm dropdown-toggle"
@@ -34,9 +29,7 @@ const Item = ({ securityService, handleDelete }) => (
           </button>
 
           <ul className="dropdown-menu dropdown-menu-right" role="menu">
-            {policy.isAllowed(
-              "shared_filesystem_storage:security_service_delete"
-            ) && (
+            {policy.isAllowed("shared_filesystem_storage:security_service_delete") && (
               <li>
                 <a
                   href="#"
@@ -49,19 +42,13 @@ const Item = ({ securityService, handleDelete }) => (
                 </a>
               </li>
             )}
-            {policy.isAllowed(
-              "shared_filesystem_storage:security_service_update"
-            ) && (
+            {policy.isAllowed("shared_filesystem_storage:security_service_update") && (
               <li>
-                <Link to={`/security-services/${securityService.id}/edit`}>
-                  Edit
-                </Link>
+                <Link to={`/security-services/${securityService.id}/edit`}>Edit</Link>
               </li>
             )}
             <li>
-              <Link to={`/security-services/${securityService.id}/error-log`}>
-                Error Log
-              </Link>
+              <Link to={`/security-services/${securityService.id}/error-log`}>Error Log</Link>
             </li>
           </ul>
         </div>
