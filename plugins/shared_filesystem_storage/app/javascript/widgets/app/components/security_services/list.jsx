@@ -68,7 +68,7 @@ export default class SecurityServiceList extends React.Component {
             <tbody>
               {this.props.securityServices.length === 0 ? (
                 <tr>
-                  <td colSpan="5">No Security Service found.</td>
+                  <td colSpan="3">No Security Service found.</td>
                 </tr>
               ) : (
                 this.props.securityServices.map((securityService) => (
