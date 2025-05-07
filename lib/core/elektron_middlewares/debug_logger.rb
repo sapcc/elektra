@@ -21,10 +21,7 @@ module Core
           Rails.logger.debug(
             "Elektron #{request_context.service_name} " \
               "(#{request_context.options[:region]}/" \
-              "#{request_context.options[:interface]}):".colorize(
-              color: :cyan,
-              mode: :bold,
-            ),
+              "#{request_context.options[:interface]}):",
           )
 
           output =
@@ -40,7 +37,6 @@ module Core
           output =
             output
               .split("\n")
-              .collect { |t| t.colorize(color: :blue, mode: :bold) }
               .join("\n")
           Rails.logger.debug(output)
 
@@ -52,7 +48,6 @@ module Core
           output =
             output
               .split("\n")
-              .collect { |t| t.colorize(color: :blue, mode: :bold) }
               .join("\n")
           Rails.logger.debug(output)
 
@@ -67,7 +62,7 @@ module Core
           output =
             output
               .split("\n")
-              .collect { |t| t.colorize(color: :red, mode: :bold) }
+              .collect { t }
               .join("\n")
           Rails.logger.debug(output + "\n")
           raise e
