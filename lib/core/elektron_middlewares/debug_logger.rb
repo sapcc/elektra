@@ -40,7 +40,6 @@ module Core
           output =
             output
               .split("\n")
-              .collect { |t| t.colorize(color: :blue, mode: :bold) }
               .join("\n")
           Rails.logger.debug(output)
 
@@ -52,7 +51,6 @@ module Core
           output =
             output
               .split("\n")
-              .collect { |t| t.colorize(color: :blue, mode: :bold) }
               .join("\n")
           Rails.logger.debug(output)
 

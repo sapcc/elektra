@@ -40,8 +40,6 @@ gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
 gem 'ed25519', '>= 1.2', '< 2.0'
 gem 'netaddr', '2.0.4'
 
-gem 'colorize'
-
 gem 'ruby-radius'
 
 # Extras
