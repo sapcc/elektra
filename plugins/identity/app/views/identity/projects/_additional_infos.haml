@@ -19,13 +19,6 @@
           %td
             = link_to plugin('identity').edit_project_path({load_project_root: true}), data: {modal: true, toggle: "tooltip", placement: "left"} do
               Edit
-      - if current_user.is_allowed?("access_profile:tag_list", {target: {project: @active_project}}) && plugin_available?(:access_profile)
-        %tr
-          %th.snug-nowrap
-            Access Profiles:
-          %td
-            = link_to plugin('access_profile').root_path(modal_size: "none"), data: {modal: true, modal_size: "none"} do
-              Edit
       - if services.available?(:identity,:elektron_prodel) && current_user.is_allowed?("identity:project_delete", {target: {project: @active_project}})
         %tr
           %th.snug-nowrap
