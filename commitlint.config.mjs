@@ -11,7 +11,7 @@ export const scopes = [
   "infra",
   "ui",
   "version",
-  "access-profile",
+  "plugins",
   "audit",
   "automation",
   "block-storage",
