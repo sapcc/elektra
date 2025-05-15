@@ -17,7 +17,9 @@ on:
 jobs:
   test:
     name: Run tests
-    if: github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name || (github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name && github.event.label.name == 'safe-to-test')
+    if: |
+      github.event.pull_request.head.repo.full_name == github.repository ||
+      contains(github.event.pull_request.labels.*.name, 'save-to-test')
     runs-on: ubuntu-latest
     container:
       image: ruby:3.2
