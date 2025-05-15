@@ -7,8 +7,9 @@
 name: Checks
 
 on:
-  pull_request:
+  pull_request_target:
     types:
+      - labeled
       - opened
       - synchronize
       - reopened
@@ -16,6 +17,7 @@ on:
 jobs:
   test:
     name: Run tests
+    if: github.event.pull_request.head.repo.full_name == github.repository || ( github.event.pull_request.head.repo.full_name != github.repository github.event.label.name == 'safe-to-test')
     runs-on: ubuntu-latest
     container:
       image: ruby:3.2
