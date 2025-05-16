@@ -30,5 +30,17 @@ module Identity
       render json: { auth_projects: updated_projects }
     end
 
+    def api_endpoints
+      @token = current_user.token
+      @webcli_endpoint = current_user.service_url('webcli')
+      @identity_url = current_user.service_url('identity')
+    end
+
+    def download_openrc_ps1
+    end
+
+    def download_openrc
+    end
+
   end
 end
