@@ -14,6 +14,9 @@ ALLOWED_ROLES = %w[
   keymanager_viewer
   kubernetes_admin
   kubernetes_member
+  loadbalancer_admin
+  loadbalancer_viewer
+  loadbalancer_poolmemberadmin
   member
   masterdata_admin
   masterdata_viewer
@@ -55,4 +58,6 @@ BLACKLISTED_ROLES = %w[
   cloud_objectstore_viewer
   cloud_masterdata_admin
   cloud_masterdata_viewer
+  cloud_persephone_admin
+  cloud_persephone_viewer
 ].freeze

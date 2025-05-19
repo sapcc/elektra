@@ -21,3 +21,5 @@ domains:
       - "test_02"
       - "test_01"
     dns_c_subdomain: false
+    # set this to use the federation feature in keystone
+    federation: false

@@ -40,6 +40,10 @@ class DomainConfig
     @domain_config.fetch('disabled_features', []).include?(name.to_s)
   end
 
+  def federation?
+    @domain_config.fetch('federation', false)
+  end
+
   def terms_of_use_name
     @domain_config.fetch("terms_of_use_name", "actual_terms")
   end
