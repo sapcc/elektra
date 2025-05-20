@@ -41,7 +41,8 @@ jobs:
         #         and the secret is not available in forked repositories
         # if a PR comes from a forked repository we need to check the title manually
         # and comment on the PR with the result
-        if: github.event.pull_request.head.repo.full_name == github.repository
+        if: |
+          github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
