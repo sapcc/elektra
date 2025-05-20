@@ -39,7 +39,7 @@ jobs:
         if: |
           github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name && !contains(github.event.pull_request.labels.*.name, 'save-to-merge')
         run: |
-          echo "PR is from a fork and the label 'save-to-merge' is missing, this will not pass ❌"
+          echo "PR is from a fork and the label 'save-to-merge' is missing, this will not pass 🧙❌"
           echo "Message for the Maintainer: Please check the tests and if they are ok, add the label 'save-to-merge' to the PR."
           exit 1
       - name: Setup Javascript (act only)
