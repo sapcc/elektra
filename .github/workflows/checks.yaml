@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: Check for fork and missing label
         if: |
-          github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name && !contains(github.event.pull_request.labels.*.name, 'save-to-merge')
+          github.event.pull_request.head.repo.full_name != github.repository && !contains(github.event.pull_request.labels.*.name, 'save-to-merge')
         run: |
           echo "PR is from a fork and the label 'save-to-merge' is missing, this will not pass 🧙❌"
           echo "Message for the Maintainer: Please check the tests and if they are ok, add the label 'save-to-merge' to the PR."
@@ -106,7 +106,7 @@ jobs:
       - name: Yarn install
         # this runs only in PRs from the same repo because of the missing npm token to download the packages
         if: |
-          github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+          github.event.pull_request.head.repo.full_name == github.repository
         id: test-js
         run: |
           yarn install
