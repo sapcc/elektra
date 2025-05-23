@@ -7,10 +7,9 @@ class CoreApplicationMailer < ActionMailer::Base
 
   def send_custom_email(recipient:, subject:, body_html:)
     # Get the token form the cloud_admin instance
-    token = cloud_admin.instance_variable_get(:@api_client).token
-        
-    # Set up the UI
-    uri = URI.parse(Rails.configuration.limes_mailer_address)
+    token = cloud_admin.instance_variable_get(:@api_client).token   
+
+    uri = URI.parse(Rails.configuration.limes_mail_server_endpoint)
     uri.query = URI.encode_www_form({ from: 'elektra' })
    
     # Set up the body for the request
@@ -42,14 +41,10 @@ class CoreApplicationMailer < ActionMailer::Base
 
   private
 
-  ###################################
-  # TODO: 
-  # - add to the cloud_admin user "role:cloud_resource_admin or role:resource_service"
-  ###################################
   def cloud_admin
     @cloud_admin ||=
       Core::ServiceLayer::ServicesManager.new(
-        Core::ApiClientManager.cloud_admin_api_client(Rails.configuration.limes_mailer_auth_endpoint),          
+        Core::ApiClientManager.cloud_admin_api_client,          
       )
   end
 
