@@ -48,7 +48,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId, overlay }) 
         setAppCredentialsFoundForProject(foundProject)
       })
       .catch((error) => {
-        setError(error.message)
+        setError(error.data.error.error.message)
       })
       .finally(() => {
         setIsLoading(false)
