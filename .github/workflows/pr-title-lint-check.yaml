@@ -8,6 +8,10 @@ on:
       - synchronize
       - reopened
 
+permissions:
+  pull-requests: read
+  contents: read
+
 jobs:
   title-lint:
     name: Validate title
