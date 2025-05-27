@@ -8,9 +8,10 @@ on:
       - synchronize
       - reopened
 
+# https://github.com/amannn/action-semantic-pull-request/issues/249
 permissions:
-  pull-requests: write
-  contents: read
+  pull-requests: read
+  statuses: write
 
 jobs:
   title-lint:
