@@ -46,7 +46,7 @@ const VolumesList = ({
       })
     }
   }
-
+  console.log(volumes)
   return (
     <>
       {(volumes.items.length > 5 || canCreate) && (
@@ -54,9 +54,7 @@ const VolumesList = ({
           <Form
             isLoading={volumes.isFetching}
             searchFor={["name", "description", "id", "status"]}
-            onSubmit={(searchType, searchTerm) =>
-              fetchVolumes({ searchType, searchTerm })
-            }
+            onSubmit={(searchType, searchTerm) => fetchVolumes({ searchType, searchTerm })}
             helpText="Search by name, ID or status will find exact or partial matches. ID and status have to be exact matches to be found."
           />
           {canCreate && (
@@ -78,6 +76,7 @@ const VolumesList = ({
             <th>Description</th>
             <th>Size(GB)</th>
             <th>Attached to</th>
+            <th>Updated At</th>
             <th>Status</th>
             <th className="snug"></th>
           </tr>
@@ -98,13 +97,7 @@ const VolumesList = ({
             ))
           ) : (
             <tr>
-              <td colSpan="7">
-                {volumes.isFetching ? (
-                  <span className="spinner" />
-                ) : (
-                  "No volumes found."
-                )}
-              </td>
+              <td colSpan="7">{volumes.isFetching ? <span className="spinner" /> : "No volumes found."}</td>
             </tr>
           )}
         </tbody>
