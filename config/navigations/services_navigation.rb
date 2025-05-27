@@ -361,7 +361,12 @@ SimpleNavigation::Configuration.run do |navigation|
                        plugin_available?(:shared_filesystem_storage)
                    } do |storage_nav|
       storage_nav.item :shared_storage,
-                       'Shared Object Storage',
+                      capture {
+                        concat 'Object Storage '
+                        concat content_tag(
+                          :span, 'swift', class: 'label label-info'
+                        )
+                       },
                        -> { plugin('object_storage').service_path(service_name: 'swift') },
                        if: lambda {
                          current_user.has_service?('object-store') &&
@@ -371,7 +376,7 @@ SimpleNavigation::Configuration.run do |navigation|
                          proc { params[:controller][%r{object_storage/.*}] }
       storage_nav.item :shared_storage_ceph,
                        capture {
-                         concat 'Shared Object Storage '
+                         concat 'Object Storage '
                          concat content_tag(
                            :span, 'ceph', class: 'label label-info'
                          )
@@ -379,14 +384,13 @@ SimpleNavigation::Configuration.run do |navigation|
                        -> { plugin('object_storage').service_path(service_name: 'ceph') },
                        if: lambda {
                          current_user.has_service?('object-store-ceph') &&
-                           plugin_available?(:object_storage) &&
-                           @active_project&.tags && @active_project.tags.include?('ceph')
+                           plugin_available?(:object_storage)
                        },
                        highlights_on:
                          proc { params[:controller][%r{object_storage/.*}] }
 
       storage_nav.item :shared_filesystem_storage,
-                       'Shared File System Storage',
+                       'File System Storage',
                        lambda {
                          plugin('shared_filesystem_storage').start_path(
                            'shares'
