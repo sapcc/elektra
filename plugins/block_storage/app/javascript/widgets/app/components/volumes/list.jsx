@@ -17,6 +17,7 @@ const VolumesList = ({
   forceDeleteVolume,
   detachVolume,
 }) => {
+  const [showAvailable, setShowAvailable] = React.useState(false)
   // Body
   useEffect(() => listenToVolumes(), [])
   useEffect(() => {
@@ -46,7 +47,7 @@ const VolumesList = ({
       })
     }
   }
-  console.log(volumes)
+
   return (
     <>
       {(volumes.items.length > 5 || canCreate) && (
@@ -57,6 +58,8 @@ const VolumesList = ({
             onSubmit={(searchType, searchTerm) => fetchVolumes({ searchType, searchTerm })}
             helpText="Search by name, ID or status will find exact or partial matches. ID and status have to be exact matches to be found."
           />
+          <input type="checkbox" checked={showAvailable} onChange={() => setShowAvailable(!showAvailable)} />
+          <span style={{ paddingLeft: "5px", paddingTop: "4px" }}>Show only available volumes</span>
           {canCreate && (
             <div className="main-buttons">
               <DefeatableLink to="/volumes/new" className="btn btn-primary">
@@ -84,17 +87,19 @@ const VolumesList = ({
 
         <tbody>
           {volumes.items && volumes.items.length > 0 ? (
-            volumes.items.map((volume, index) => (
-              <Item
-                volume={volume}
-                key={index}
-                searchTerm={""}
-                reloadVolume={reloadVolume}
-                deleteVolume={deleteVolume}
-                detachVolume={detachVolume}
-                forceDeleteVolume={forceDeleteVolume}
-              />
-            ))
+            volumes.items
+              .filter((volume) => !showAvailable || volume.status === "available")
+              .map((volume, index) => (
+                <Item
+                  volume={volume}
+                  key={index}
+                  searchTerm={""}
+                  reloadVolume={reloadVolume}
+                  deleteVolume={deleteVolume}
+                  detachVolume={detachVolume}
+                  forceDeleteVolume={forceDeleteVolume}
+                />
+              ))
           ) : (
             <tr>
               <td colSpan="7">{volumes.isFetching ? <span className="spinner" /> : "No volumes found."}</td>
