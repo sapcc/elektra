@@ -97,7 +97,7 @@ const VolumeItem = ({ reloadVolume, deleteVolume, forceDeleteVolume, detachVolum
             </div>
           ))}
       </td>
-      <td>
+      <td style={{ whiteSpace: "nowrap" }}>
         {new Date(volume.updated_at).toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",

@@ -78,8 +78,8 @@ const VolumesList = ({
             <th>Availability Zone</th>
             <th>Description</th>
             <th>Size(GB)</th>
-            <th>Attached to</th>
-            <th>Updated At</th>
+            <th style={{ whiteSpace: "nowrap" }}>Attached To</th>
+            <th style={{ whiteSpace: "nowrap" }}>Updated At</th>
             <th>Status</th>
             <th className="snug"></th>
           </tr>
