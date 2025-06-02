@@ -48,7 +48,7 @@ const AppCredentialsList = ({ userId, refreshRequestedAt, projectId, overlay }) 
         setAppCredentialsFoundForProject(foundProject)
       })
       .catch((error) => {
-        setError(error.data.error.error.message || "An error occurred while fetching application credentials.")
+        setError(error?.data?.error?.error?.message || "An error occurred while fetching application credentials.")
         console.error("Error fetching application credentials:", error)
       })
       .finally(() => {
