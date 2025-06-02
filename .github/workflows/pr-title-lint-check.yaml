@@ -8,6 +8,10 @@ on:
       - synchronize
       - reopened
 
+permissions:
+  pull-requests: read
+  statuses: write # because of wip=true the action amannn/action-semantic-pull-request@v5 needs to write a status check https://github.com/amannn/action-semantic-pull-request/issues/249
+
 jobs:
   title-lint:
     name: Validate title
