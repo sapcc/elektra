@@ -14,6 +14,9 @@ on:
       - synchronize
       - reopened
 
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Run tests
@@ -103,7 +106,7 @@ jobs:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
           key: yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Yarn install
+      - name: Install packages and run tests
         # this runs only in PRs from the same repo because of the missing npm token to download the packages
         if: |
           github.event.pull_request.head.repo.full_name == github.repository
