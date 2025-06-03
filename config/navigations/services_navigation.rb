@@ -373,7 +373,7 @@ SimpleNavigation::Configuration.run do |navigation|
                            plugin_available?(:object_storage)
                        },
                        highlights_on:
-                         proc { params[:controller][%r{object_storage/.*}] }
+                         proc { params[:controller][%r{object_storage/swift/.*}] }
       storage_nav.item :shared_storage_ceph,
                        capture {
                          concat 'Object Storage '
@@ -387,7 +387,7 @@ SimpleNavigation::Configuration.run do |navigation|
                            plugin_available?(:object_storage)
                        },
                        highlights_on:
-                         proc { params[:controller][%r{object_storage/.*}] }
+                         proc { params[:controller][%r{object_storage/ceph/.*}] }
 
       storage_nav.item :shared_filesystem_storage,
                        'File System Storage',
